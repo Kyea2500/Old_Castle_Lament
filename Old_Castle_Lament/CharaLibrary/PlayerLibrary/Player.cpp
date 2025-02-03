@@ -2,6 +2,8 @@
 #include "../../GameProcess/Pad/Pad.h"
 #include"../プロジェクトに追加すべきファイル_VC用/DxLib.h"
 #include"../../GameProcess/Game.h"
+
+
 namespace
 {
 	// キャラクターグラフィックの幅と高さ
@@ -9,6 +11,10 @@ namespace
 	constexpr int kGraphHeight = 32;
 	constexpr int kGraphSize = 32;
 
+	// 拡大縮小等
+	constexpr float ChangeSize = 1.5f;
+	constexpr float ChangeShotSize = 1.2f;
+	constexpr int half = 2;
 	constexpr int kGraphWidthBig = 32 * 1.5;
 	constexpr int kGraphHeightBig = 32 * 1.5;
 
@@ -56,16 +62,26 @@ namespace
 	constexpr float kDeceleration = 0.4f; // ダッシュの減速値
 
 	// ダメージ食らった後の無敵時間
-	constexpr int kDamageBlinkFrame = 30;
+	constexpr int kDamageBlinkFrame = 60;
 
-	// 死亡演出
-	constexpr int kDeadStopFrame = 30;    // 死んだ瞬間に止まる時間
-	constexpr float kDeadJumpSpeed = -4.0f; // 死んだあと飛び上がる初速
+	// 吹き飛び判定
+	constexpr float kBlown_Away = 32.1f;
+	constexpr float kDeadBlown = 2.0f;
 
-	// 攻撃のクールタイム(連射を抑える処理)
-	constexpr float kCoolTimeAttack = 6.0f;
-	constexpr float kCoolTimeChant = 120.0f;
+	// 行動番号
+	constexpr int first = 1;
+	constexpr int second = 2;
+	constexpr int third = 3;
 
+	// 一定距離以下なら射撃を禁止する
+	constexpr float ShotBanArea = 3.18f;
+
+	// 弾を場から消す
+	constexpr int Endlessly_Ahead = 2000;
+
+	// アニメーションを止める(指定以上先にある描画の削除)
+	constexpr int StopAnimNo_isChange = 3;
+	constexpr int StopAnimNo_isDead = 6;
 }
 
 Player::Player():
@@ -100,7 +116,7 @@ Player::Player():
 	m_isChargingFrame(0.0f),
 	m_Change(0),
 	m_Chant(0),
-	m_blinktime(0)
+	m_blinkFrameCount(0)	
 {
 }
 
@@ -126,6 +142,11 @@ void Player::InitShot()
 void Player::Update()
 {
 	Pad::Update();
+	m_blinkFrameCount--;
+	if (m_blinkFrameCount < 0)
+	{
+		m_blinkFrameCount = 0;
+	}
 	if (!m_isDead)
 	{
 		UpdateNormal();
@@ -140,12 +161,17 @@ void Player::Update()
 
 void Player::OnDamage()
 {
+	if (m_blinkFrameCount > 0) return;
+	// 無敵時間(点滅する時間)を設定する
+	m_blinkFrameCount = kDamageBlinkFrame;
 	m_Life--;
+	m_pos.x -= kBlown_Away;	
 	// HPが0以下になったら死亡演出を開始する
 	if (m_Life <= 0)
 	{
 		m_isDead = true;
 	}
+	return;
 }
 
 float Player::Player_HitCircleX()
@@ -183,11 +209,6 @@ void Player::UpdateNormal()
 {
 	// アニメーションの更新
 	m_animFrame++;
-	m_blinktime--;
-	if (m_blinktime <= 0)
-	{
-		m_blinktime = 0;
-	}
 	// アニメーションの全体数
 	int totalFrame = kIdleAnimNum * kSingleAnimFrame;
 	if (m_isMove)
@@ -225,14 +246,11 @@ void Player::UpdateNormal()
 
 
 	// 移動していないとき、フラグを下ろす
-	/*if (m_isDirUp == true)DrawFormatString(0, 20, 0xffffff, L"Up : true");
-	if (m_isDirLeft == true)DrawFormatString(0, 40, 0xffffff, L"Left : true");
-	if (m_isDirRight == true)DrawFormatString(0, 60, 0xffffff, L"Right : true");
-	if (m_isDirDown == true)DrawFormatString(0, 80, 0xffffff, L"Down : true");*/
+#ifdef DISP_COLLISION
 	if(m_Change==0)DrawFormatString(0,Game::kScreenHeight- kGraphHeight, 0xffffff, L"IceShot");
 	if(m_Change==1)DrawFormatString(0,Game::kScreenHeight - kGraphHeight, 0xffffff, L"ThunderShot");
 	if(m_Change==2)DrawFormatString(0,Game::kScreenHeight - kGraphHeight, 0xffffff, L"AirShot");
-
+#endif
 	if (m_isMove != isLastRun)
 	{
 		m_animFrame = 0;
@@ -258,6 +276,7 @@ void Player::UpdateDead()
 	if (m_isDead)
 	{
 		// アニメーションの更新
+		m_pos.x -= kDeadBlown;
 		m_animFrame++;
 		int totalFrame = kDeadAnimNum * kSingleAnimFrame;
 		if (m_animFrame >= totalFrame)
@@ -326,9 +345,9 @@ void Player::UpdateMove()
 	{
 		m_pos.x = kGraphWidth;
 	}
-	if (m_pos.x > Game::kScreenWidth / 2 - kGraphWidthBig / 2)
+	if (m_pos.x > Game::kScreenWidth / half - kGraphWidthBig / half)
 	{
-		m_pos.x = Game::kScreenWidth / 2- kGraphWidthBig / 2;
+		m_pos.x = Game::kScreenWidth / half - kGraphWidthBig / half;
 	}
 	if (m_pos.y < kGraphHeight)
 	{
@@ -350,24 +369,26 @@ void Player::UpdateAttack()
 		if (Pad::IsPress(PAD_INPUT_3) || Pad::IsPress(PAD_INPUT_2))
 		{
 			m_isAttack = true;
-			m_isShot = true;
 			m_animFrame = 0;
 			m_isDirRight = true;
-			InitShot();
-			for (int i = 0; i < SHOT; i++)
+			if (m_pos.x >= Game::kScreenWidth/ ShotBanArea)
 			{
-				// 弾iが画面上にでていない場合はその弾を画面に出す
-				if (!m_ShotBotton)
+				m_isShot = true;
+				InitShot();
+				for (int i = 0; i < SHOT; i++)
 				{
+					// 弾iが画面上にでていない場合はその弾を画面に出す
+					if (!m_ShotBotton)
+					{
+						shot_pos.x = (kGraphWidth - kShotGraphWidth) / half + m_pos.x;
+						shot_pos.y = (kGraphHeight / half - kShotGraphHeight) / half + m_pos.y;
 
-					shot_pos.x = (kGraphWidth - kShotGraphWidth) / 2 + m_pos.x;
-					shot_pos.y = (kGraphHeight / 2 - kShotGraphHeight) / 2 + m_pos.y;
+						// 弾iは現時点を持って存在するので、存在状態を保持する変数にtrueを代入する				
+						m_ShotBotton = true;
 
-					// 弾iは現時点を持って存在するので、存在状態を保持する変数にtrueを代入する				
-					m_ShotBotton = true;
-
-					// 一つ弾を出したので弾を出すループから抜けます
-					break;
+						// 一つ弾を出したので弾を出すループから抜けます
+						break;
+					}
 				}
 			}
 		}
@@ -456,17 +477,17 @@ void Player::UpdateChange()
 			if (!m_isShot)
 			{
 				m_Chant++;
-				if (m_Chant==1)
+				if (m_Chant==first)
 				{
 					m_Change = 0;
 				}
-				if (m_Chant==2)
+				if (m_Chant== second)
 				{
-					m_Change = 1;
+					m_Change = first;
 				}
-				if (m_Chant == 3)
+				if (m_Chant == third)
 				{
-					m_Change = 2;
+					m_Change = second;
 					m_Chant = 0;
 				}
 			}
@@ -481,11 +502,11 @@ void Player::UpdateShot()
 	{
 		shot_pos.x += IceShotSpeed;
 	}
-	if (m_Change == 1)
+	if (m_Change == first)
 	{
 		shot_pos.x += ThunderShotSpeed;
 	}
-	if (m_Change == 2)
+	if (m_Change == second)
 	{
 		shot_pos.x += AirShotSpeed;
 	}
@@ -501,7 +522,7 @@ void Player::UpdateShot()
 		}
 	}
 
-	if (m_Change == 1)
+	if (m_Change == first)
 	{
 		ShotFrame = kShotThunder_AnimNum * kSingleAnimFrame;
 		if (m_animFrame >= ShotFrame)
@@ -510,7 +531,7 @@ void Player::UpdateShot()
 		}
 	}
 
-	if (m_Change == 2)
+	if (m_Change == second)
 	{
 		ShotFrame = kShotAir_AnimNum * kSingleAnimFrame;
 		if (m_animFrame >= ShotFrame)
@@ -525,41 +546,43 @@ void Player::UpdateShot()
 		{
 			if (shot_pos.x > Game::kScreenWidth)
 			{
-				m_isShot = false;
-				m_ShotBotton = false;
-				EndShot();
+				HitShot();
 			}
 		}
-		if (m_Change == 1)
+		if (m_Change == first)
 		{
 			if (shot_pos.x > Game::kScreenWidth)
 			{
-				m_isShot = false;
-				m_ShotBotton = false;
-				EndShot();
+				HitShot();
 			}
 		}
-		if (m_Change == 2)
+		if (m_Change == second)
 		{
 			if (shot_pos.x > Game::kScreenWidth)
 			{
-				m_isShot = false;
-				m_ShotBotton = false;
-				EndShot();
+				HitShot();
 			}
 		}
-
-
-
-
-
-
 	}
+	
+
+}
+
+void Player::HitShot()
+{
+	shot_pos.y = Endlessly_Ahead;
+	m_isShot = false;
+	m_ShotBotton = false;
+	EndShot();
 
 }
 
 void Player::Draw()
 {
+	if ((m_blinkFrameCount / half) % half)
+	{
+		return;
+	}
 	// 使用するグラフィックのハンドルを一旦別のint型変数に格納する
 	int useHandle = m_handleIdle;
 	if (m_isMove)
@@ -575,22 +598,21 @@ void Player::Draw()
 		useHandle = m_handleDead;
 	}
 
-
 	int animNo = m_animFrame / kSingleAnimFrame;
 	
 	if (m_isChange)
 	{
-		if (animNo >= 3)
+		if (animNo >= StopAnimNo_isChange)
 		{
-			animNo = 3;
+			animNo = StopAnimNo_isChange;
 		}
 	}
 
 	if (m_isDead)
 	{
-		if (animNo >= 6)
+		if (animNo >= StopAnimNo_isDead)
 		{
-			animNo = 6;
+			animNo = StopAnimNo_isDead;
 		}
 	}
 
@@ -604,11 +626,12 @@ void Player::Draw()
 
 	}
 
-	DrawRectRotaGraph(static_cast<int>(m_pos.x - kGraphWidth / 2), static_cast<int>(m_pos.y - kGraphHeight),
-		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, 1.5, 0,
+	DrawRectRotaGraph(static_cast<int>(m_pos.x - kGraphWidth / half), static_cast<int>(m_pos.y - kGraphHeight),
+		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, ChangeSize, 0,
 		useHandle, true, m_ishir, false);
-
+#ifdef DISP_COLLISION
 	DrawCircle(Player_HitCircleX(),Player_HitCircleY(),Player_HitCircleRad(), 0xffffff, false);
+#endif
 
 	if (m_isShot)
 	{
@@ -619,28 +642,29 @@ void Player::Draw()
 void Player::DrawShot()
 {
 	int shotanimNo = m_animFrame / kSingleAnimFrame;
-	int m_NextShot = -1;
+	int m_NextShot = 0;
 
 	if (m_Change == 0)
 	{
 		m_NextShot = m_handleIce_Shot;
 	}
 
-	if (m_Change == 1)
+	else if (m_Change == first)
 	{
 		m_NextShot = m_handleThunder_Shot;
 	}
 
-	if (m_Change == 2)
+	else if (m_Change == second)
 	{
 		m_NextShot = m_handleAir_Shot;
 	}
 
-	DrawRectRotaGraph(static_cast<int>(shot_pos.x - kShotGraphWidth / 2), static_cast<int>(shot_pos.y - kShotGraphHeight),
-		shotanimNo * kShotGraphWidth, 0, kShotGraphWidth, kShotGraphHeight,1.2,0,
+	DrawRectRotaGraph(static_cast<int>(shot_pos.x - kShotGraphWidth / half), static_cast<int>(shot_pos.y - kShotGraphHeight),
+		shotanimNo * kShotGraphWidth, 0, kShotGraphWidth, kShotGraphHeight, ChangeShotSize,0,
 		m_NextShot, true, false, false);
-
+#ifdef DISP_COLLISION
 	DrawCircle(Shot_CircleX(), Shot_CircleY(), Shot_CircleRad(), 0xffffff, false);
+#endif
 }
 
 void Player::End()
@@ -650,6 +674,7 @@ void Player::End()
 	DeleteGraph(m_handleAttack);
 	DeleteGraph(m_handleDead);
 }
+
 void Player::EndShot()
 {
 	DeleteGraph(m_handleIce_Shot);

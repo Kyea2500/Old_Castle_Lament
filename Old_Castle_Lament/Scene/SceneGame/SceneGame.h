@@ -16,7 +16,8 @@ public:
 	/*SceneManager::Kind Update();*/
 	void Draw();
 	void End();
-	void Collision();
+	void ObjectCol();
+	void BulletCol();
 private:
 	// ‚¢‚Á‚½‚ñ‚·‚×‚Ä“–‚½‚Á‚Ä‚¢‚é‚±‚Æ‚Æ‚·‚é
 	bool HitPlayer;

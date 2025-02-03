@@ -19,6 +19,7 @@ public:
 	void UpdateDead();   // €–SŒã‚ÌUpdate
 	void InitShot();
 	void UpdateShot();
+	void HitShot();
 	void DrawShot();
 	void EndShot();
 
@@ -31,6 +32,7 @@ public:
 	float Shot_CircleX();
 	float Shot_CircleY();
 	float Shot_CircleRad();
+
 
 private:
 	void UpdateMove();
@@ -104,6 +106,6 @@ private:
 	// ’e‚ÌØ‚è‘Ö‚¦@0:•X’e@1:—‹’e@2:•—’e
 	int m_Change;
 
-	int m_blinktime;
+	int m_blinkFrameCount;
 };
 

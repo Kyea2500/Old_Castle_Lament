@@ -46,7 +46,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		// ‚±‚±‚ÉƒQ[ƒ€‚Ìˆ—‚ð‘‚­
-		 
 		pScene->Update();
 		pScene->Draw();
 		

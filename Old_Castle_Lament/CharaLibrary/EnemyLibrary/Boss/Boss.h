@@ -23,7 +23,7 @@ public:
 	void Update();
 	void UpdateMove();
 	void UpdateAttack();
-	/*void UpdateShot();*/
+	void UpdateShot();
 	void Draw();
 	void OnDamage();	// ダメージを受けた時
 	void End();
@@ -36,10 +36,12 @@ private:
 	int BossIdle;
 	int BossWalk;
 	int BossAttack;
-	/*int BossShot;*/
+	int BossShotSet;
+	int BossShot;
 	int BossDead;
 	Vec2 Boss_pos;
 	Vec2 AttackPos;
+	Vec2 ShotPos;
 	// フレーム数を数える
 	int Boss_animFrame;
 	int Boss_AttackFrame;
@@ -53,7 +55,10 @@ private:
 	bool BossIsWalk;
 	// 近接攻撃	
 	bool BossIsAttack;
-	/*bool BossIsShot;*/
+	// 遠距離攻撃
+	bool BossIsSet;
+	bool BossIsShot;
+	bool BossShotis;
 	// 出現
 	bool BossIsSpawn;
 	// 今はどれか

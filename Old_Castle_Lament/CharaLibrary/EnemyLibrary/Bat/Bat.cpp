@@ -7,6 +7,9 @@ namespace
 	constexpr int kGraphHeight = 20;
 	constexpr int kGraphSize = 20;
 
+	constexpr float ChangeSize = 3.0f;
+	constexpr int half = 2;
+
 	constexpr float bat_CircleX = kGraphWidth / 2;
 	constexpr float bat_CircleY = kGraphHeight;
 	constexpr float bat_CircleR = kGraphSize / 2;
@@ -16,6 +19,9 @@ namespace
 	constexpr int kDeadAnimNum = 5;
 
 	constexpr float kSpeed = 2.0f;
+
+	constexpr float DownStertY = 50.0f;
+	constexpr float UpStertY = 50.0f;
 }
 
 Bat::Bat() :
@@ -45,21 +51,10 @@ void Bat::Update()
 	if (!BatDamageFlag)
 	{
 		UpdateMove();
-
-		if (CheckHitKey(KEY_INPUT_Q))
-		{
-			BatDamageFlag = true;
-		}
-
 	}
 	if(BatDamageFlag)
 	{
 		UpdateDead();
-		if (CheckHitKey(KEY_INPUT_E))
-		{
-			Spawn();
-			BatDamageFlag = false;
-		}
 	}
 
 }
@@ -76,9 +71,8 @@ void Bat::End()
 
 void Bat::Spawn()
 {
-	Init();
 	Bat_pos.x = Game::kScreenWidth;
-	Bat_pos.y = Game::kScreenHeight / 2;
+	Bat_pos.y = Game::kScreenHeight / half;
 }
 
 float Bat::Bat_HitCircleX()
@@ -105,10 +99,10 @@ void Bat::UpdateMove()
 	if (Bat_pos.x < 0)
 	{
 		Bat_pos.x = Game::kScreenWidth + kGraphWidth;
-		Bat_pos.y += 50.0f;
+		Bat_pos.y += DownStertY;
 		if (Bat_pos.y > Game::kScreenHeight)
 		{
-			Bat_pos.y = 50.0f;
+			Bat_pos.y = UpStertY;
 		}
 	}
 	if (Bat_animFrame >= totalFrame)
@@ -122,9 +116,11 @@ void Bat::UpdateDead()
 	Bat_animFrame++;
 	Bat_pos.y += BatSpeed;
 	int totalFrame = kDeadAnimNum * kSingleAnimFrame;
-	if (Bat_animFrame >= totalFrame)
+	if (Bat_pos.y >= Game::kScreenHeight + kGraphHeight)
 	{
-		End();
+		BatDamageFlag = false;
+		Init();
+		Spawn();
 	}
 }
 
@@ -138,10 +134,11 @@ void Bat::Draw()
 	}
 
 	int animNo = Bat_animFrame / kSingleAnimFrame;
-	DrawRectRotaGraph(static_cast<int>(Bat_pos.x - kGraphWidth / 2), static_cast<int>(Bat_pos.y - kGraphHeight),
-		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, 3, 0,
+	DrawRectRotaGraph(static_cast<int>(Bat_pos.x - kGraphWidth / half), static_cast<int>(Bat_pos.y - kGraphHeight),
+		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, ChangeSize, 0,
 		useHandle, true, true, false);
-
+#ifdef DISP_COLLISION
 	DrawCircle(Bat_HitCircleX(),Bat_HitCircleY(), Bat_HitCircleRad(), 0xffffff, false);
+#endif
 }
 

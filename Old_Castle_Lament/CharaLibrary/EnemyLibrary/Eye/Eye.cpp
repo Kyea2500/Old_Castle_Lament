@@ -7,6 +7,9 @@ namespace
 	constexpr int kGraphHeight = 28;
 	constexpr int kGraphSize = 32;
 
+	constexpr float ChangeSize = 3.5f;
+	constexpr int half = 2;
+
 	constexpr float E_CircleX= kGraphWidth;
 	constexpr float E_CircleY = kGraphHeight*1.7;
 	constexpr float E_CircleR = kGraphSize/1.5;
@@ -21,6 +24,9 @@ namespace
 	constexpr float kAccel = 0.2f;
 	constexpr float kHighSpeed = 1.0f;
 	constexpr float kLowSpeed = 5.0f;
+
+	constexpr float DownStertY = 30.0f;
+	constexpr float UpStertY = 50.0f;
 
 }
 Eye::Eye() :
@@ -92,11 +98,13 @@ void Eye::Draw()
 	{
 		useHandle = EyeDead;
 	}
-	DrawRectRotaGraph(static_cast<int>(Eye_pos.x - kGraphWidth / 2), static_cast<int>(Eye_pos.y - kGraphHeight),
-		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, 3.5, 0,
+	DrawRectRotaGraph(static_cast<int>(Eye_pos.x - kGraphWidth / half), static_cast<int>(Eye_pos.y - kGraphHeight),
+		animNo * kGraphWidth, 0, kGraphWidth, kGraphHeight, ChangeSize, 0,
 		useHandle, true, true, false);
 
+#ifdef DISP_COLLISION
 	DrawCircle(Eye_HitCircleX(), Eye_HitCircleY(), Eye_HitCircleRad(), 0xffffff, false);
+#endif
 }
 
 void Eye::OnDamage()
@@ -141,11 +149,11 @@ void Eye::UpdateMove()
 	if (Eye_pos.x < 0)
 	{
 		Eye_pos.x = Game::kScreenWidth + kGraphWidth;
-		Eye_pos.y -=50.0f;
+		Eye_pos.y -= UpStertY;
 	}
 	if (Eye_pos.y < 0)
 	{
-		Eye_pos.y = Game::kScreenHeight - 30;
+		Eye_pos.y = Game::kScreenHeight - DownStertY;
 	}
 	int totalFrame = kFryAnimNum * kSingleAnimFrame;
 	if (Eye_animFrame >= totalFrame)
@@ -156,11 +164,13 @@ void Eye::UpdateMove()
 
 void Eye::UpdateDead()
 {
-	Eye_pos.y += EyeSpeed/2;
+	Eye_pos.y += EyeSpeed/half;
 	Eye_animFrame++;
 	int totalFrame = kDeadAnimNum * kDeadAnimFrame;
-	if (Eye_animFrame >= totalFrame)
+	if (Eye_pos.y >= Game::kScreenHeight + kGraphSize)
 	{
-		End();
+		EyeDamageFlag = false;
+		Spawn();
 	}
+
 }

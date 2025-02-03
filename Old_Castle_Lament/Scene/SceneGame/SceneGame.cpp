@@ -30,14 +30,41 @@ void SceneGame::Init()
 ////
 void SceneGame::Update()
 {
+#ifdef DISP_COLLISION
+	DrawLineAA(Game::kScreenWidth / 3.18f, 0.0f, Game::kScreenWidth / 3.2f, Game::kScreenHeight, GetColor(255, 255, 255));    // 射撃可能エリア
+	DrawLineAA(Game::kScreenWidth / 2- 32 * 1.5/2, 0.0f, Game::kScreenWidth / 2 - 32 * 1.5 / 2, Game::kScreenHeight, GetColor(0, 255, 255));    // 操作可能エリア
+#endif
 	player.Update();
 	boss.Update();
 	bat.Update();
 	eye.Update();
 
-	////	プレイヤーと敵の各種衝突判定　////
-	Collision();
+	//オブジェクト間の当たり判定
+	ObjectCol();
 
+	//弾との当たり判定
+	BulletCol();
+}
+
+void SceneGame::Draw()
+{
+	boss.Draw();
+	player.Draw();
+	bat.Draw();
+	eye.Draw();
+	
+}
+
+void SceneGame::End()
+{
+	player.End();
+	boss.End();
+	bat.End();
+	eye.End();
+}
+
+void SceneGame::ObjectCol()
+{
 	// プレイヤーとボスの衝突判定
 	float PtoB_X = player.Player_HitCircleX() - boss.Boss_AttackCircleX();
 	float PtoB_Y = player.Player_HitCircleY() - boss.Boss_AttackCircleY();
@@ -53,151 +80,144 @@ void SceneGame::Update()
 	float PtoE_Y = player.Player_HitCircleY() - eye.Eye_HitCircleY();
 	float PtoE = sqrt(PtoE_X * PtoE_X + PtoE_Y * PtoE_Y);
 
-	////	弾と敵の各種当たり判定　////
+	// プレイヤーと敵が衝突するとプレイヤーにダメージが入る
+	if (PtoB <= player.Player_HitCircleRad() + boss.Boss_AttackCircleRad())
+	{
+		HitPlayer = true;
+#ifdef DISP_COLLISION
+		DrawString(0, 20, L"hitPlayer", 0xffffff);
+#endif
+	}
+	else if (Ptob <= player.Player_HitCircleRad() + bat.Bat_HitCircleRad())
+	{
+		HitPlayer = true;
+		bat.OnDamage();
+#ifdef DISP_COLLISION
+		DrawString(0, 20, L"hitPlayer", 0xffffff);
+#endif
+	}
+	else if (PtoE <= player.Player_HitCircleRad() + eye.Eye_HitCircleRad())
+	{
+		HitPlayer = true;
+		eye.OnDamage();
+#ifdef DISP_COLLISION
+		DrawString(0, 20, L"hitPlayer", 0xffffff);
+#endif
+	}
+	else
+	{
+		HitPlayer = false;
+	}
 
+#ifdef DISP_COLLISION
+	//Playerと敵の相対距離
+	DrawFormatString(0, 40, 0xffffff, L"PtoBLength:%f", PtoB);
+	DrawFormatString(0, 60, 0xffffff, L"PtobLength:%f", Ptob);
+	DrawFormatString(0, 80, 0xffffff, L"PtoELength:%f", PtoE);
+#endif
+
+	//エネミーとプレイヤーが当たったかどうかの判定
+	if (HitPlayer)
+	{
+		player.OnDamage();
+	}
+}
+
+void SceneGame::BulletCol()
+{
+	/*ボス*/
 	// 弾とボスの当たり判定
 	float StoB_X = player.Shot_CircleX() - boss.Boss_HitCircleX();
 	float StoB_Y = player.Shot_CircleY() - boss.Boss_HitCircleY();
 	float StoB = sqrt(StoB_X * StoB_X + StoB_Y * StoB_Y);
 
+#ifdef DISP_COLLISION
+	//弾とボスの相対位置
+	DrawFormatString(0, 100, 0xffffff, L"StoBLength:%f", StoB);
+	DrawFormatString(0, 160, 0xffffff, L"PtoBRad:%f", player.Player_HitCircleRad() + boss.Boss_HitCircleRad());
+#endif
+
+	// 弾が敵に当たると弾が消滅し、ダメージを与える
+	if (StoB <= player.Shot_CircleRad() + boss.Boss_HitCircleRad())
+	{
+		player.HitShot();
+		boss.OnDamage();
+#ifdef DISP_COLLISION
+		DrawString(0, 0, L"hitBoss", 0xffffff);
+#endif
+	}
+	else// 当たらなければ変化しない
+	{
+		HitShot = false;
+	}
+
+	// 弾とボスの攻撃との当たり判定
+	float StoA_X = player.Shot_CircleX() - boss.Boss_AttackCircleX();//
+	float StoA_Y = player.Shot_CircleY() - boss.Boss_AttackCircleY();
+	float StoA = sqrt(StoA_X * StoA_X + StoA_Y * StoA_Y);
+
+	// 弾が敵に当たると弾が消滅し、ダメージを与える
+	if (StoA <= player.Shot_CircleRad() + boss.Boss_AttackCircleRad())
+	{
+		player.HitShot();
+#ifdef DISP_COLLISION
+		DrawString(0, 0, L"DeleteShot", 0xffffff);
+#endif
+	}
+	else// 当たらなければ変化しない
+	{
+		HitShot = false;
+
+	}
+
+	/*コウモリ*/
 	// 弾とコウモリの当たり判定
 	float Stob_X = player.Shot_CircleX() - bat.Bat_HitCircleX();
 	float Stob_Y = player.Shot_CircleY() - bat.Bat_HitCircleY();
 	float Stob = sqrt(Stob_X * Stob_X + Stob_Y * Stob_Y);
 
-	// 弾とイビルアイの当たり判定
-	float StoE_X = player.Shot_CircleX() - eye.Eye_HitCircleX();
-	float StoE_Y = player.Shot_CircleX() - eye.Eye_HitCircleY();
-	float StoE = sqrt(StoE_X * StoE_X + StoE_Y * StoE_Y);
+#ifdef DISP_COLLISION
+	//弾とコウモリの相対位置
+	DrawFormatString(0, 120, 0xffffff, L"StobLength:%f", StoB);
+	DrawFormatString(0, 180, 0xffffff, L"PtobRad:%f", player.Player_HitCircleRad() + bat.Bat_HitCircleRad());
+#endif
 
-	// プレイヤーと敵が衝突するとプレイヤーにダメージが入る
-	if (PtoB <= player.Player_HitCircleRad() + boss.Boss_AttackCircleRad())
-	{
-		HitPlayer = true;
-		isHitPlayerToEnemy = true;
-	}
-	if (Ptob <= player.Player_HitCircleRad() + bat.Bat_HitCircleRad())
-	{
-		HitPlayer = true;
-		HitBat = true;
-		isHitPlayerToEnemy = true;
-	}
-	if (PtoE <= player.Player_HitCircleRad() + eye.Eye_HitCircleRad())
-	{
-		HitPlayer = true;
-		HitEye = true;
-		isHitPlayerToEnemy = true;
-	}
-
-	// 弾が敵に当たると弾が消滅し、ダメージを与える
-	if (StoB <= player.Shot_CircleRad() + boss.Boss_HitCircleRad())
-	{
-		HitShot = true;
-		HitBoss = true;
-		isHitShotToEnemy = true;
-	}
 	if (Stob <= player.Shot_CircleRad() + bat.Bat_HitCircleRad())
 	{
-		HitShot = true;
-		HitBat = true;
-		isHitShotToEnemy = true;
+		player.HitShot();
+		bat.OnDamage();
+#ifdef DISP_COLLISION
+		DrawString(0, 0, L"hitBat", 0xffffff);
+#endif
 	}
+	else// 当たらなければ変化しない
+	{
+		HitShot = false;
+	}
+
+	/*目玉*/
+	// 弾と目玉の当たり判定
+	float StoE_X = player.Shot_CircleX() - eye.Eye_HitCircleX();
+	float StoE_Y = player.Shot_CircleY() - eye.Eye_HitCircleY();
+	float StoE = sqrt(StoE_X * StoE_X + StoE_Y * StoE_Y);
+
+#ifdef DISP_COLLISION
+	//弾と目玉の相対位置
+	DrawFormatString(0, 140, 0xffffff, L"StoELength:%f", StoB);
+	DrawFormatString(0, 200, 0xffffff, L"PtoERad:%f", player.Player_HitCircleRad() + bat.Bat_HitCircleRad());
+#endif
+
 	if (StoE <= player.Shot_CircleRad() + eye.Eye_HitCircleRad())
 	{
-		HitShot = true;
-		HitEye = true;
-		isHitShotToEnemy = true;
-	}
-	// 当たらなければ変化しない
-	else
-	{
-		HitPlayer = false;
-		HitBoss = false;
-		HitBat = false;
-		HitEye = false;
-		isHitShotToEnemy = false;
-	}
-
-	if (HitPlayer)
-	{
-		player.OnDamage();
-	}
-	if (HitBoss)
-	{
-		boss.OnDamage();
-	}
-	if (HitBat)
-	{
-		bat.OnDamage();
-	}
-	if (HitEye)
-	{
+		player.HitShot();
 		eye.OnDamage();
+#ifdef DISP_COLLISION
+		DrawString(0, 0, L"hitEye", 0xffffff);
+#endif
 	}
-
-	if (isHitShotToEnemy)
-	{
-		DrawString(0, 0, L"hitEnemy", 0xffffff);
-	}
-
-	if (isHitPlayerToEnemy)
-	{
-		DrawString(0, 20, L"hitPlayer", 0xffffff);
-	}
-
-	DrawFormatString(0, 40, 0xffffff, L"PtoBLength:%f", PtoB);
-	DrawFormatString(0, 60, 0xffffff, L"PtobLength:%f", Ptob);
-	DrawFormatString(0, 80, 0xffffff, L"PtoELength:%f", PtoE);
-
-	DrawFormatString(0, 100, 0xffffff, L"StoBLength:%f", StoB);
-	DrawFormatString(0, 120, 0xffffff, L"StobLength:%f", Stob);
-	DrawFormatString(0, 140, 0xffffff, L"StoELength:%f", StoE);
-
-	DrawFormatString(0, 160, 0xffffff, L"PtoBRad:%f", player.Player_HitCircleRad() + boss.Boss_AttackCircleRad());
-	DrawFormatString(0, 180, 0xffffff, L"PtobRad:%f", player.Player_HitCircleRad() + bat.Bat_HitCircleRad());
-	DrawFormatString(0, 200, 0xffffff, L"PtoERad:%f", player.Player_HitCircleRad() + eye.Eye_HitCircleRad());
-
-
-	if (Ptob <= player.Player_HitCircleRad() + bat.Bat_HitCircleRad() ||
-		PtoB <= player.Player_HitCircleRad() + boss.Boss_AttackCircleRad() ||
-		PtoE <= player.Player_HitCircleRad() + eye.Eye_HitCircleRad())
-	{
-		isHitPlayerToEnemy = true;
-	}
-
-	if (StoB <= player.Shot_CircleRad() + boss.Boss_HitCircleRad() ||
-		Stob <= player.Shot_CircleRad() + bat.Bat_HitCircleRad() ||
-		StoE <= player.Shot_CircleRad() + eye.Eye_HitCircleRad())
-	{
-		isHitShotToEnemy = true;
-	}
-
-
 	else
 	{
-		isHitPlayerToEnemy = false;
-		isHitShotToEnemy = false;
+		HitShot = false;
 	}
-	/*return SceneManager::SceneKind::kSceneGame;*/
-}
 
-void SceneGame::Draw()
-{
-	player.Draw();
-	boss.Draw();
-	bat.Draw();
-	eye.Draw();
-	
-}
-
-void SceneGame::End()
-{
-	player.End();
-	boss.End();
-	bat.End();
-	eye.End();
-}
-
-void SceneGame::Collision()
-{
 }

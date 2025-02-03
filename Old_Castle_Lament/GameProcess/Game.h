@@ -1,5 +1,4 @@
 #pragma once
-
 namespace Game
 {
 	// ‰æ–Êî•ñ‚ğ’è”’è‹`
@@ -10,12 +9,12 @@ namespace Game
 	constexpr bool kDefaultWindowMode = true;
 }
 
+
 #define SHOT 18
 
-#define PLAYER_LIFE 1
-#define BOSS_LIFE 50
+#define PLAYER_LIFE 3
+#define BOSS_LIFE 15
 
-
-/*EX—p*/
-// #define PLAYER_EXLIFE 4
-// #define ENEMY_EXLIFE 90
+#ifdef _DEBUG
+#define DISP_COLLISION
+#endif
