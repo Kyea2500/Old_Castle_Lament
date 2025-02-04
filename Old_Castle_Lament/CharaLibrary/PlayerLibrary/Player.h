@@ -22,6 +22,7 @@ public:
 	void HitShot();
 	void DrawShot();
 	void EndShot();
+	int GetLife()const { return m_Life; };
 
 	// ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
 	float Player_HitCircleX();
@@ -105,7 +106,8 @@ private:
 	int m_Chant;
 	// ’e‚ÌØ‚è‘Ö‚¦@0:•X’e@1:—‹’e@2:•—’e
 	int m_Change;
-
+	// –³“GŠÔ‚Ìİ’è
 	int m_blinkFrameCount;
+	bool BanShot;
 };
 

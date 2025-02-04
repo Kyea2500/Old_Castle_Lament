@@ -1,6 +1,5 @@
 #pragma once
-#include "../../Scene/SceneManager/SceneManager.h"
-
+#include "../SceneManager/SceneManager.h"
 class SceneTitle
 {
 public:
@@ -8,8 +7,8 @@ public:
 	~SceneTitle();
 
 	void Init();
-	void Update();
-	//SceneManager::Kind Update(); 
+	//void Update();
+	SceneManager::SceneKind Update();
 	void Draw();
 	void End();
 private:

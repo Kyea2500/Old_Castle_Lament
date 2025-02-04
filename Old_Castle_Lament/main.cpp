@@ -1,8 +1,6 @@
 #include "DxLib.h"
-//#include "Player/Player.h"
-//#include "Enemy/Boss.h"
-#include "Scene/SceneGame/SceneGame.h"
-#include"Scene/SceneTitle/SceneTitle.h"
+#include"Scene/SceneManager/SceneManager.h"
+#include"Scene/SceneClear/SceneClear.h"
 #include"GameProcess/Game.h"
 #include"resource.h"
 
@@ -26,9 +24,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// 描画先を裏画面にする
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	/*SceneTitle* pScene = new SceneTitle();*/
-	SceneGame* pScene = new SceneGame();
-	/*SceneManager* pScene = new SceneManager();*/
+	/*SceneGameClear* pScene = new SceneGameClear();*/
+	SceneManager* pScene = new SceneManager();
 	pScene->Init();
 
 	//Player* m_player = new Player();	//コンストラクタに入る

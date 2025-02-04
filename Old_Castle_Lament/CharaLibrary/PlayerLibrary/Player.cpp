@@ -74,7 +74,7 @@ namespace
 	constexpr int third = 3;
 
 	// 一定距離以下なら射撃を禁止する
-	constexpr float ShotBanArea = 3.18f;
+	constexpr float ShotBanArea = 3.5f;
 
 	// 弾を場から消す
 	constexpr int Endlessly_Ahead = 2000;
@@ -116,7 +116,8 @@ Player::Player():
 	m_isChargingFrame(0.0f),
 	m_Change(0),
 	m_Chant(0),
-	m_blinkFrameCount(0)	
+	m_blinkFrameCount(0),
+	BanShot(false)
 {
 }
 
@@ -141,7 +142,6 @@ void Player::InitShot()
 
 void Player::Update()
 {
-	Pad::Update();
 	m_blinkFrameCount--;
 	if (m_blinkFrameCount < 0)
 	{
@@ -371,8 +371,10 @@ void Player::UpdateAttack()
 			m_isAttack = true;
 			m_animFrame = 0;
 			m_isDirRight = true;
-			if (m_pos.x >= Game::kScreenWidth/ ShotBanArea)
+			
+			if (m_pos.x > Game::kScreenWidth / ShotBanArea)
 			{
+
 				m_isShot = true;
 				InitShot();
 				for (int i = 0; i < SHOT; i++)
@@ -542,27 +544,29 @@ void Player::UpdateShot()
 
 	if (m_isShot)
 	{
-		if (m_Change == 0)
-		{
-			if (shot_pos.x > Game::kScreenWidth)
+	
+			if (m_Change == 0)
 			{
-				HitShot();
+				if (shot_pos.x > Game::kScreenWidth)
+				{
+					HitShot();
+				}
 			}
-		}
-		if (m_Change == first)
-		{
-			if (shot_pos.x > Game::kScreenWidth)
+			if (m_Change == first)
 			{
-				HitShot();
+				if (shot_pos.x > Game::kScreenWidth)
+				{
+					HitShot();
+				}
 			}
-		}
-		if (m_Change == second)
-		{
-			if (shot_pos.x > Game::kScreenWidth)
+			if (m_Change == second)
 			{
-				HitShot();
+				if (shot_pos.x > Game::kScreenWidth)
+				{
+					HitShot();
+				}
 			}
-		}
+		
 	}
 	
 
@@ -584,6 +588,7 @@ void Player::Draw()
 		return;
 	}
 	// 使用するグラフィックのハンドルを一旦別のint型変数に格納する
+
 	int useHandle = m_handleIdle;
 	if (m_isMove)
 	{

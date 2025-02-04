@@ -23,6 +23,7 @@ public:
 	void Update();
 	void UpdateMove();
 	void UpdateAttack();
+	int GetLife()const { return BossLife; };
 	void UpdateShot();
 	void Draw();
 	void OnDamage();	// ƒ_ƒ[ƒW‚ğó‚¯‚½

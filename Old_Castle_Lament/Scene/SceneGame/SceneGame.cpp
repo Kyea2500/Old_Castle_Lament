@@ -2,6 +2,12 @@
 #include<math.h>
 #include"../../GameProcess/Game.h"
 #include <DxLib.h>
+#include "../../GameProcess/Pad/Pad.h"
+namespace
+{
+	constexpr int NextScene = 30;
+	const int Color = GetColor(20, 20, 40);
+}
 
 SceneGame::SceneGame():
 	HitPlayer(false),
@@ -9,8 +15,10 @@ SceneGame::SceneGame():
 	HitBat(false),
 	HitEye(false),
 	HitShot(false),
+	m_isGameEnd(false),
 	isHitPlayerToEnemy(false),
-	isHitShotToEnemy(false)
+	isHitShotToEnemy(false),
+	ChangeCount(0)
 {
 }
 
@@ -28,12 +36,23 @@ void SceneGame::Init()
 	eye.Init();
 }
 ////
-void SceneGame::Update()
+SceneManager::SceneKind SceneGame::Update()
 {
-#ifdef DISP_COLLISION
-	DrawLineAA(Game::kScreenWidth / 3.18f, 0.0f, Game::kScreenWidth / 3.2f, Game::kScreenHeight, GetColor(255, 255, 255));    // 射撃可能エリア
-	DrawLineAA(Game::kScreenWidth / 2- 32 * 1.5/2, 0.0f, Game::kScreenWidth / 2 - 32 * 1.5 / 2, Game::kScreenHeight, GetColor(0, 255, 255));    // 操作可能エリア
-#endif
+	if (m_isGameEnd)
+	{
+		ChangeCount++;
+		if (ChangeCount >= NextScene)
+		{
+			if (player.GetLife() == 0)
+			{
+				return SceneManager::SceneKind::kSceneGameOver;
+			}
+			else
+			{
+				return SceneManager::SceneKind::kSceneGameOver;
+			}
+		}
+	}
 	player.Update();
 	boss.Update();
 	bat.Update();
@@ -44,10 +63,22 @@ void SceneGame::Update()
 
 	//弾との当たり判定
 	BulletCol();
+
+	if (player.GetLife() == 0)
+	{
+			m_isGameEnd = true;
+	}
+	return SceneManager::SceneKind();
+
 }
 
 void SceneGame::Draw()
 {
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, Color, true);
+#ifdef DISP_COLLISION
+	DrawLineAA(Game::kScreenWidth / 3.18f, 0.0f, Game::kScreenWidth / 3.2f, Game::kScreenHeight, GetColor(255, 255, 255));    // 射撃可能エリア
+	DrawLineAA(Game::kScreenWidth / 2 - 32 * 1.5 / 2, 0.0f, Game::kScreenWidth / 2 - 32 * 1.5 / 2, Game::kScreenHeight, GetColor(0, 255, 255));    // 操作可能エリア
+#endif
 	boss.Draw();
 	player.Draw();
 	bat.Draw();

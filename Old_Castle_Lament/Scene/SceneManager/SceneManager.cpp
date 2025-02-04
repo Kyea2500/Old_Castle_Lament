@@ -1,18 +1,16 @@
 #include "SceneManager.h"
+#include "../SceneTitle/SceneTitle.h"
+#include "../SceneGame/SceneGame.h"
+#include"../SceneGameOver/SceneGameOver.h"
+#include"../SceneClear/SceneClear.h"
+#include"../../GameProcess/Pad/Pad.h"
 
-SceneManager::SceneManager()
-	: Kind(kSceneTitle)
+SceneManager::SceneManager():m_Kind(kSceneTitle),
+m_pSceneTitle(nullptr),
+m_pSceneGame(nullptr),
+m_pSceneGameOver(nullptr),
+m_pSceneGameClear(nullptr)
 {
-	//m_pSceneTitle=std::make_shared<SceneTitle>();
-	//m_pSceneGame = std::make_shared<SceneGame>();
-	/*m_pSceneGameOver = std::make_shared<SceneGameOver>();
-	m_pSceneGameClear = std::make_shared<SceneGameClear>();*/
-
-	m_pSceneTitle = new SceneTitle;
-	m_pSceneGame = new SceneGame;
-	/*m_pSceneGameOver = new SceneGameOver;
-	m_pSceneGameClear = new SceneGameClear;*/
-	Kind = kSceneTitle;
 }
 
 SceneManager::~SceneManager()
@@ -23,67 +21,86 @@ SceneManager::~SceneManager()
 		delete m_pSceneTitle;
 	}
 
-	if (m_pSceneGame != nullptr)
+	else if (m_pSceneGame != nullptr)
 	{
 		m_pSceneGame = nullptr;
 		delete m_pSceneGame;
 	}
 
-	/*
-	if (m_pSceneGameOver != nullptr)
+	else if (m_pSceneGameOver != nullptr)
 	{
 		m_pSceneGameOver = nullptr;
 		delete m_pSceneGameOver;
 	}
-
-	if (m_pSceneGameClear != nullptr)
+	else if (m_pSceneGameClear != nullptr)
 	{
 		m_pSceneGameClear = nullptr;
 		delete m_pSceneGameClear;
-	}*/
+	}
 }
 
 void SceneManager::Init()
 {
-	switch (Kind)
+	switch (m_Kind)
 	{
 	case SceneManager::kSceneTitle:
-		m_pSceneTitle->Init();
-		break;
+		m_pSceneTitle = new SceneTitle;
+	m_pSceneTitle->Init();
+	break;
 	case SceneManager::kSceneGame:
-		m_pSceneGame->Init();
+		m_pSceneGame = new SceneGame;
+	m_pSceneGame->Init();
 		break;
-	/*case SceneManager::kSceneGameOver:
-		m_pSceneGameOver->Init();
+	case SceneManager::kSceneGameOver:
+		m_pSceneGameOver = new SceneGameOver;
+	m_pSceneGameOver->Init();
 		break;
 	case SceneManager::kSceneGameClear:
+		m_pSceneGameClear = new SceneGameClear;
 		m_pSceneGameClear->Init();
-		break;*/
+		break;
+	case SceneManager::kSceneNum:
+	default:
+		break;
 	}
 }
 
 void SceneManager::Update()
 {
-	switch (Kind)
+	Pad::Update();
+	SceneKind nextKind = m_Kind;
+	switch (m_Kind)
 	{
 	case SceneManager::kSceneTitle:
-		m_pSceneTitle->Update();
+		nextKind = m_pSceneTitle->Update();
 		break;
 	case SceneManager::kSceneGame:
-		m_pSceneGame->Update();
+		nextKind = m_pSceneGame->Update();
 		break;
-	//case SceneManager::kSceneGameOver:
-	//	m_pSceneGameOver->Update();
-	//	break;
-	//case SceneManager::kSceneGameClear:
-	//	m_pSceneGameClear->Update();
-	//	break;
+	case SceneManager::kSceneGameOver:
+		nextKind = m_pSceneGameOver->Update();
+		break;
+	case SceneManager::kSceneGameClear:
+		nextKind = m_pSceneGameClear->Update();
+		break;
+	case SceneManager::kSceneNum:
+	default:
+		break;
+	}
+	if (nextKind != m_Kind)
+	{
+		// 現在実行中のシーン(m_kind)の終了処理
+		End();
+		// 次のシーンに切り替え
+		m_Kind = nextKind;
+		// 切り替え後のシーンの初期化
+		Init();
 	}
 }
 
 void SceneManager::Draw()
 {
-	switch (Kind)
+	switch (m_Kind)
 	{
 	case SceneManager::kSceneTitle:
 		m_pSceneTitle->Draw();
@@ -91,31 +108,44 @@ void SceneManager::Draw()
 	case SceneManager::kSceneGame:
 		m_pSceneGame->Draw();
 		break;
-	/*case SceneManager::kSceneGameOver:
+	case SceneManager::kSceneGameOver:
 		m_pSceneGameOver->Draw();
 		break;
 	case SceneManager::kSceneGameClear:
 		m_pSceneGameClear->Draw();
-		break;*/
+		break;
+	case SceneManager::kSceneNum:
+	default:
+		break;
 	}
 }
 
 void SceneManager::End()
 {
-	switch (Kind)
+	switch (m_Kind)
 	{
 	case SceneManager::kSceneTitle:
 		m_pSceneTitle->End();
+		delete m_pSceneTitle;
+		m_pSceneTitle = nullptr;
 		break;
 	case SceneManager::kSceneGame:
 		m_pSceneGame->End();
+		delete m_pSceneGame;
+		m_pSceneGame = nullptr;
 		break;
-	}
-	/*case SceneManager::kSceneGameOver:
+	case SceneManager::kSceneGameOver:
 		m_pSceneGameOver->End();
+		delete m_pSceneGameOver;
+		m_pSceneGameOver = nullptr;
 		break;
 	case SceneManager::kSceneGameClear:
 		m_pSceneGameClear->End();
+		delete m_pSceneGameClear;
+		m_pSceneGameClear = nullptr;
 		break;
-	}*/
+	case SceneManager::kSceneNum:
+	default:
+		break;
+	}
 }

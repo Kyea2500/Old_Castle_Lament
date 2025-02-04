@@ -253,7 +253,7 @@ void Boss::Update()
 		}
 	}
 
-
+#ifdef DISP_COLLISION
 	if (CheckHitKey(KEY_INPUT_O))
 	{
 		OnDamage();
@@ -264,6 +264,7 @@ void Boss::Update()
 		Boss_animFrame = 0;
 		BossLife = 0;
 	}
+#endif
 }
 
 void Boss::Draw()

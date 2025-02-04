@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Scene/SceneManager/SceneManager.h"
+#include "../SceneManager/SceneManager.h"
 #include "../../CharaLibrary/PlayerLibrary/Player.h"
 #include"../../CharaLibrary/EnemyLibrary/Boss/Boss.h"
 #include"../../CharaLibrary/EnemyLibrary/Bat/Bat.h"
@@ -12,8 +12,8 @@ public:
 	~SceneGame();
 
 	void Init();
-	void Update();
-	/*SceneManager::Kind Update();*/
+	//void Update();
+	SceneManager::SceneKind Update();
 	void Draw();
 	void End();
 	void ObjectCol();
@@ -25,10 +25,12 @@ private:
 	bool HitBoss;
 	bool HitBat;
 	bool HitEye;
-
+	bool m_isGameEnd;
 
 	bool isHitPlayerToEnemy;
 	bool isHitShotToEnemy;
+
+	int ChangeCount;
 
 	Player player;	//コンストラクタに入る	//初期化処理に入る
 	Boss boss;
