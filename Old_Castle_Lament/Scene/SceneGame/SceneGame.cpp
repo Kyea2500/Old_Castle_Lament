@@ -7,6 +7,10 @@ namespace
 {
 	constexpr int NextScene = 30;
 	const int Color = GetColor(20, 20, 40);
+	const int Colors = GetColor(200, 200, 200);
+	constexpr float Line = 3.18f;
+	constexpr float Lines = 3.2f;
+
 }
 
 SceneGame::SceneGame():
@@ -79,8 +83,9 @@ SceneManager::SceneKind SceneGame::Update()
 void SceneGame::Draw()
 {
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, Color, true);
+	DrawLineAA(Game::kScreenWidth / Line, 0.0f, Game::kScreenWidth / Lines, Game::kScreenHeight, Colors);    // 射撃可能エリア
 #ifdef DISP_COLLISION
-	DrawLineAA(Game::kScreenWidth / 3.18f, 0.0f, Game::kScreenWidth / 3.2f, Game::kScreenHeight, GetColor(255, 255, 255));    // 射撃可能エリア
+	
 	DrawLineAA(Game::kScreenWidth / 2 - 32 * 1.5 / 2, 0.0f, Game::kScreenWidth / 2 - 32 * 1.5 / 2, Game::kScreenHeight, GetColor(0, 255, 255));    // 操作可能エリア
 #endif
 	boss.Draw();
