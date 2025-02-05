@@ -28,6 +28,9 @@ namespace
 	constexpr float DownStertY = 30.0f;
 	constexpr float UpStertY = 50.0f;
 
+	constexpr int Endlessly_Ahead = 2000;
+
+
 }
 Eye::Eye() :
 	EyeFry(-1),
@@ -167,6 +170,11 @@ void Eye::UpdateDead()
 	Eye_pos.y += EyeSpeed/half;
 	Eye_animFrame++;
 	int totalFrame = kDeadAnimNum * kDeadAnimFrame;
+	if (Eye_animFrame >= totalFrame)
+	{
+		Eye_pos.y = Endlessly_Ahead;
+
+	}
 	if (Eye_pos.y >= Game::kScreenHeight + kGraphSize)
 	{
 		EyeDamageFlag = false;

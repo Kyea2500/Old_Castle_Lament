@@ -74,7 +74,7 @@ namespace
 	constexpr int third = 3;
 
 	// ˆê’è‹——£ˆÈ‰º‚È‚çËŒ‚‚ğ‹Ö~‚·‚é
-	constexpr float ShotBanArea = 3.5f;
+	constexpr float ShotBanArea = 3.21f;
 
 	// ’e‚ğê‚©‚çÁ‚·
 	constexpr int Endlessly_Ahead = 2000;
@@ -117,7 +117,10 @@ Player::Player():
 	m_Change(0),
 	m_Chant(0),
 	m_blinkFrameCount(0),
-	BanShot(false)
+	BanShot(false),
+	m_Lifehandle(0),
+	m_LostLifehandle(0)
+
 {
 }
 

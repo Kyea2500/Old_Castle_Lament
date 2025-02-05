@@ -40,6 +40,8 @@ private:
 	void UpdateAttack();
 	void UpdateDash();
 	void UpdateChange();
+
+	
 	
 
 	// « Šeí‚É•K—v‚ÈŠÖ”
@@ -109,5 +111,7 @@ private:
 	// –³“GŠÔ‚Ìİ’è
 	int m_blinkFrameCount;
 	bool BanShot;
+	int m_Lifehandle;
+	int m_LostLifehandle;
 };
 

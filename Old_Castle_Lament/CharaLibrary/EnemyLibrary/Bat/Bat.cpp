@@ -22,6 +22,8 @@ namespace
 
 	constexpr float DownStertY = 50.0f;
 	constexpr float UpStertY = 50.0f;
+	constexpr int Endlessly_Ahead = 2000;
+
 }
 
 Bat::Bat() :
@@ -116,6 +118,11 @@ void Bat::UpdateDead()
 	Bat_animFrame++;
 	Bat_pos.y += BatSpeed;
 	int totalFrame = kDeadAnimNum * kSingleAnimFrame;
+	if (Bat_animFrame >= totalFrame)
+	{
+		Bat_pos.y = Endlessly_Ahead;
+	}
+
 	if (Bat_pos.y >= Game::kScreenHeight + kGraphHeight)
 	{
 		BatDamageFlag = false;
