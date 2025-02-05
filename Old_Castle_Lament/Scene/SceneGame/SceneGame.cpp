@@ -49,7 +49,7 @@ SceneManager::SceneKind SceneGame::Update()
 			}
 			else
 			{
-				return SceneManager::SceneKind::kSceneGameOver;
+				return SceneManager::SceneKind::kSceneGameClear;
 			}
 		}
 	}
@@ -68,7 +68,11 @@ SceneManager::SceneKind SceneGame::Update()
 	{
 			m_isGameEnd = true;
 	}
-	return SceneManager::SceneKind();
+	else if (boss.GetLife() == 0)
+	{
+		m_isGameEnd = true;
+	}
+	return SceneManager::kSceneGame;
 
 }
 

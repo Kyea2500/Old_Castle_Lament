@@ -64,7 +64,35 @@ void SceneManager::Init()
 		break;
 	}
 }
-
+void SceneManager::End()
+{
+	switch (m_Kind)
+	{
+	case SceneManager::kSceneTitle:
+		m_pSceneTitle->End();
+		delete m_pSceneTitle;
+		m_pSceneTitle = nullptr;
+		break;
+	case SceneManager::kSceneGame:
+		m_pSceneGame->End();
+		delete m_pSceneGame;
+		m_pSceneGame = nullptr;
+		break;
+	case SceneManager::kSceneGameOver:
+		m_pSceneGameOver->End();
+		delete m_pSceneGameOver;
+		m_pSceneGameOver = nullptr;
+		break;
+	case SceneManager::kSceneGameClear:
+		m_pSceneGameClear->End();
+		delete m_pSceneGameClear;
+		m_pSceneGameClear = nullptr;
+		break;
+	case SceneManager::kSceneNum:
+	default:
+		break;
+	}
+}
 void SceneManager::Update()
 {
 	Pad::Update();
@@ -120,32 +148,5 @@ void SceneManager::Draw()
 	}
 }
 
-void SceneManager::End()
-{
-	switch (m_Kind)
-	{
-	case SceneManager::kSceneTitle:
-		m_pSceneTitle->End();
-		delete m_pSceneTitle;
-		m_pSceneTitle = nullptr;
-		break;
-	case SceneManager::kSceneGame:
-		m_pSceneGame->End();
-		delete m_pSceneGame;
-		m_pSceneGame = nullptr;
-		break;
-	case SceneManager::kSceneGameOver:
-		m_pSceneGameOver->End();
-		delete m_pSceneGameOver;
-		m_pSceneGameOver = nullptr;
-		break;
-	case SceneManager::kSceneGameClear:
-		m_pSceneGameClear->End();
-		delete m_pSceneGameClear;
-		m_pSceneGameClear = nullptr;
-		break;
-	case SceneManager::kSceneNum:
-	default:
-		break;
-	}
-}
+
+

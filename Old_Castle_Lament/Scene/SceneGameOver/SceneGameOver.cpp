@@ -49,7 +49,7 @@ SceneManager::SceneKind SceneGameOver::Update()
 	{
 		return SceneManager::SceneKind::kSceneTitle;
 	}
-	return SceneManager::SceneKind();
+	return SceneManager::SceneKind::kSceneGameOver;
 }
 
 void SceneGameOver::Draw()

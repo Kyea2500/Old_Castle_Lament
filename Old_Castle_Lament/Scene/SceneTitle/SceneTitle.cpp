@@ -54,7 +54,7 @@ SceneManager::SceneKind SceneTitle::Update()
 	}
 
 	// 何もしなければシーンは遷移しない(タイトル画面のまま)
-	return SceneManager::SceneKind();
+	return SceneManager::SceneKind::kSceneTitle;
 }
 
 void SceneTitle::Draw()
