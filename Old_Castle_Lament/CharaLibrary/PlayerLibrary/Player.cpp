@@ -264,11 +264,12 @@ void Player::UpdateNormal()
 	UpdateDash();
 	UpdateChange();
 	UpdateShot();
+#ifdef DISP_COLLISION
 	if (CheckHitKey(KEY_INPUT_SPACE))
 	{
 		OnDamage();
 	};
-	
+#endif
 }
 
 void Player::UpdateDead()
