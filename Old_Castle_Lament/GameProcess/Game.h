@@ -13,7 +13,7 @@ namespace Game
 #define SHOT 18
 
 #define PLAYER_LIFE 3
-#define BOSS_LIFE 15
+#define BOSS_LIFE 25
 
 #ifdef _DEBUG
 #define DISP_COLLISION
