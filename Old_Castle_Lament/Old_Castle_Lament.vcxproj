@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\date\image\Lament.ico" />
-    <Image Include="C:\Users\fko2447064\Downloads\untitled.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

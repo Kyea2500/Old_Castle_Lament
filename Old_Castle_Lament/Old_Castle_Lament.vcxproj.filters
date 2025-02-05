@@ -96,9 +96,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\fko2447064\Downloads\untitled.png">
-      <Filter>リソース ファイル</Filter>
-    </Image>
     <Image Include="..\date\image\Lament.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
