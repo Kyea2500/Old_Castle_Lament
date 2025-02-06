@@ -7,7 +7,7 @@ namespace
 {
 	constexpr int NextScene = 30;
 	const int Color = GetColor(20, 20, 40);
-	const int Colors = GetColor(200, 200, 200);
+	const int Colors = GetColor(100, 100, 100);
 	constexpr float Line = 3.18f;
 	constexpr float Lines = 3.2f;
 
