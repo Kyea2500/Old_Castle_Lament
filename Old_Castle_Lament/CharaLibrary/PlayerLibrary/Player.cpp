@@ -74,7 +74,11 @@ namespace
 	constexpr int third = 3;
 
 	// ˆê’è‹——£ˆÈ‰º‚È‚çËŒ‚‚ğ‹Ö~‚·‚é
+<<<<<<< Updated upstream
 	constexpr float ShotBanArea = 3.21f;
+=======
+	constexpr float ShotBanArea = 3.18f;
+>>>>>>> Stashed changes
 
 	// ’e‚ğê‚©‚çÁ‚·
 	constexpr int Endlessly_Ahead = 2000;
@@ -268,6 +272,10 @@ void Player::UpdateNormal()
 	UpdateChange();
 	UpdateShot();
 #ifdef DISP_COLLISION
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 	if (CheckHitKey(KEY_INPUT_SPACE))
 	{
 		OnDamage();
