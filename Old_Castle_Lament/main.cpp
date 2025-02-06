@@ -8,7 +8,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	// フルスクリーンではなく、ウィンドウモードで開くようにする
-	ChangeWindowMode(1);
+	ChangeWindowMode(Game::kDefaultWindowMode);
 
 	SetWindowText(L"古城のラメン");
 	SetWindowIconID(IDI_ICON3);

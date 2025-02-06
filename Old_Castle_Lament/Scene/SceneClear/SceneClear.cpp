@@ -60,8 +60,8 @@ void SceneGameClear::Draw()
 		L"GAME CLEAR!", Color, m_fontHandle);
 	if (m_blinkFrameCount < kBlinkDispFrame)
 	{
-		int Widths = GetDrawStringWidthToHandle(L"ボタンでタイトルに戻る", strlen("1ボタンでタイトルに戻る"), m_fontHandle2);
-		DrawStringToHandle(Game::kScreenWidth / 2 - Widths / 2, kButtonTextY, L"1ボタンでタイトルに戻る", Color2, m_fontHandle2);
+		int Widths = GetDrawStringWidthToHandle(L"ボタンでタイトルに戻る", strlen("Aボタンでタイトルに戻る"), m_fontHandle2);
+		DrawStringToHandle(Game::kScreenWidth / 2 - Widths / 2, kButtonTextY, L"Aボタンでタイトルに戻る", Color2, m_fontHandle2);
 	}
 }
 

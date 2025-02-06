@@ -69,8 +69,8 @@ void SceneTitle::Draw()
 	// 1ボタンを押してください
 	if (m_blinkFrameCount < kBlinkDispFrame)
 	{
-		int width = GetDrawStringWidthToHandle(L"ボタンを押してください", strlen("1ボタンを押してください"),m_fontHandle);
-		DrawStringToHandle(Game::kScreenWidth / 2 - width / 2, kButtonTextY, L"1ボタンを押してください", Color, m_fontHandle);
+		int width = GetDrawStringWidthToHandle(L"ボタンを押してください", strlen("Aボタンを押してください"),m_fontHandle);
+		DrawStringToHandle(Game::kScreenWidth / 2 - width / 2, kButtonTextY, L"Aボタンを押してください", Color, m_fontHandle);
 	}
 }
 
