@@ -73,20 +73,24 @@ void Eye::Update()
 	if (!EyeDamageFlag)
 	{
 		UpdateMove();
+#ifdef DISP_COLLISION
 		if (CheckHitKey(KEY_INPUT_W))
 		{
 			EyeDamageFlag = true;
 		}
+#endif
 	}
 
 	if (EyeDamageFlag)
 	{
 		UpdateDead();
+#ifdef DISP_COLLISION
 		if (CheckHitKey(KEY_INPUT_R))
 		{
 			Spawn();
 			EyeDamageFlag = false;
 		}
+#endif
 	}
 
 
