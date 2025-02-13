@@ -3,7 +3,10 @@
 #include"Scene/SceneClear/SceneClear.h"
 #include"GameProcess/Game.h"
 #include"resource.h"
-
+namespace
+{
+	constexpr int MaxTime = 16667;
+}
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -60,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// escキーで終了(いったん終了)
 		if (CheckHitKey(KEY_INPUT_ESCAPE))	break;
 
-		while (GetNowHiPerformanceCount() - time < 16667)
+		while (GetNowHiPerformanceCount() - time < MaxTime)
 		{
 		}
 

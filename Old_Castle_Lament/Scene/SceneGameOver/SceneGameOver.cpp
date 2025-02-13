@@ -61,7 +61,7 @@ void SceneGameOver::Draw()
 	if (m_blinkFrameCount < kBlinkDispFrame)
 	{
 		int Widths = GetDrawStringWidthToHandle(L"ボタンでタイトルに戻る", strlen("Aボタンでタイトルに戻る"), m_fontHandle2);
-		DrawStringToHandle(Game::kScreenWidth / 2 - Widths / 2, kButtonTextY, L"Aボタンでタイトルに戻る", Color2, m_fontHandle2);
+		DrawStringToHandle(Game::kScreenWidth / half - Widths / half, kButtonTextY, L"Aボタンでタイトルに戻る", Color2, m_fontHandle2);
 	}
 }
 
