@@ -44,8 +44,8 @@ Bat::~Bat()
 
 void Bat::Init()
 {
-	BatEry = LoadGraph(L"date/image/Bat_Fly.png");
-	BatDead = LoadGraph(L"date/image/Bat_Dead.png");
+	BatEry = LoadGraph(L"../date/image/Bat_Fly.png");
+	BatDead = LoadGraph(L"../date/image/Bat_Dead.png");
 }
 
 void Bat::Update()

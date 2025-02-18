@@ -41,7 +41,7 @@ void SceneTitle::Init()
 	// フォントの生成
 	m_fontHandle = CreateFontToHandle(L"BIZ UD明朝 Medium", FontSize, InitialGraph, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	// タイトル画像の読み込み
-	m_titleGraph = LoadGraph(L"date/image/Title.png");
+	m_titleGraph = LoadGraph(L"../date/image/Title.png");
 	
 }
 

@@ -94,13 +94,13 @@ Boss::~Boss()
 
 void Boss::Init()
 {
-	BossSpawn= LoadGraph(L"date/image/skeleton_seeker_Spawn.png");
-	BossIdle = LoadGraph(L"date/image/skeleton_seeker_Idle.png");
-	BossWalk = LoadGraph(L"date/image/skeleton_seeker_Walk.png");
-	BossAttack = LoadGraph(L"date/image/skeleton_seeker_Attack.png");
-	BossShotSet = LoadGraph(L"date/image/skeleton_seeker_Shot2.png");
-	BossShot = LoadGraph(L"date/image/skeleton_seeker_Shot2.png");
-	BossDead = LoadGraph(L"date/image/skeleton_seeker_Death.png");
+	BossSpawn= LoadGraph(L"../date/image/skeleton_seeker_Spawn.png");
+	BossIdle = LoadGraph(L"../date/image/skeleton_seeker_Idle.png");
+	BossWalk = LoadGraph(L"../date/image/skeleton_seeker_Walk.png");
+	BossAttack = LoadGraph(L"../date/image/skeleton_seeker_Attack.png");
+	BossShotSet = LoadGraph(L"../date/image/skeleton_seeker_Shot2.png");
+	BossShot = LoadGraph(L"../date/image/skeleton_seeker_Shot2.png");
+	BossDead = LoadGraph(L"../date/image/skeleton_seeker_Death.png");
 	BossLife = BOSS_LIFE;
 	
 }
