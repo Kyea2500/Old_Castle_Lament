@@ -132,17 +132,17 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_handleIdle = LoadGraph(L"../date/image/player_idle.png");
-	m_handleMove = LoadGraph(L"../date/image/player_run.png");
-	m_handleAttack = LoadGraph(L"../date/image/player_attack.png");
-	m_handleDead = LoadGraph(L"../date/image/player_dead.png");
+	m_handleIdle = LoadGraph(L"date/image/player_idle.png");
+	m_handleMove = LoadGraph(L"date/image/player_run.png");
+	m_handleAttack = LoadGraph(L"date/image/player_attack.png");
+	m_handleDead = LoadGraph(L"date/image/player_dead.png");
 }
 
 void Player::InitShot()
 {
-	m_handleIce_Shot = LoadGraph(L"../date/image/IceShot.png");
-	m_handleThunder_Shot = LoadGraph(L"../date/image/ThunderShot.png");
-	m_handleAir_Shot = LoadGraph(L"../date/image/AirShot.png");
+	m_handleIce_Shot = LoadGraph(L"date/image/IceShot.png");
+	m_handleThunder_Shot = LoadGraph(L"date/image/ThunderShot.png");
+	m_handleAir_Shot = LoadGraph(L"date/image/AirShot.png");
 }
 
 void Player::Update()

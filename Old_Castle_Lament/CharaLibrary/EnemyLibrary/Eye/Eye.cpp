@@ -49,8 +49,8 @@ Eye::~Eye()
 
 void Eye::Init()
 {
-	EyeFry = LoadGraph(L"../date/image/eyeball_fry.png");
-	EyeDead = LoadGraph(L"../date/image/eyeball_dead.png");
+	EyeFry = LoadGraph(L"date/image/eyeball_fry.png");
+	EyeDead = LoadGraph(L"date/image/eyeball_dead.png");
 }
 
 float Eye::Eye_HitCircleX()
